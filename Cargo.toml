@@ -1,0 +1,24 @@
+[package]
+name = "openscap-compliance-hub"
+version = "0.1.0"
+edition = "2021"
+authors = ["Sean <avalonwavesoftware@gmail.com>"]
+license = "GPL-3.0-or-later"  # Open-source friendly for Fedora
+
+[dependencies]
+# Web framework (Axum + Tower for secure middleware)
+axum = { version = "0.7", features = ["macros"] }
+tokio = { version = "1", features = ["full"] }
+tower-http = { version = "0.5", features = ["trace", "cors"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Server-side HTML templating (modern Askama — no extra crates needed)
+askama = "0.12"
+
+# Will be used in the very next steps (ARF parsing)
+quick-xml = { version = "0.36", features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+
+# For nice Tailwind CSS helpers (typed headers for later security)
+axum-extra = { version = "0.9", features = ["typed-header"] }
