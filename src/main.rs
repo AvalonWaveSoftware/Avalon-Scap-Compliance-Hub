@@ -1,7 +1,14 @@
-use axum::{routing::get, Router};
+use askama::Template;
+use axum::{response::Html, routing::get, Router};
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+
+
+// NEW: Our dashboard template
+#[derive(Template)]
+#[template(path = "dashboard.html")]
+struct DashboardTemplate;
 
 #[tokio::main]
 async fn main() {
@@ -12,7 +19,9 @@ async fn main() {
         .init();
 
     // Build our web app router (we'll add routes for hosts, scans, etc. later)
-    let app = Router::new().route("/", get(root_handler));
+let app = Router::new()
+        .route("/", get(dashboard_handler))
+        .route("/api/hello", get(hello_handler));  // HTMX test route
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
     tracing::info!("🚀 OpenSCAP Compliance Hub listening on {}", addr);
@@ -24,7 +33,15 @@ async fn main() {
         .unwrap();
 }
 
-// Simple handler — returns plain text (we'll switch to Askama HTML + HTMX later)
-async fn root_handler() -> &'static str {
-    "✅ Hello from OpenSCAP Compliance Hub! (NIST Planning phase skeleton ready)"
+// NEW: Direct rendering — no deprecated crate needed
+async fn dashboard_handler() -> Html<String> {
+    let template = DashboardTemplate;
+    match template.render() {
+        Ok(html) => Html(html),
+        Err(_) => Html("<h1 style='color:red'>Template render error</h1>".to_string()),
+    }
+}
+
+async fn hello_handler() -> &'static str {
+    "✅ HTMX works! Server is alive (NIST secure baseline)"
 }
