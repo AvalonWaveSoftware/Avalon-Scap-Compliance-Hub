@@ -21,7 +21,7 @@ The core dashboard is functional with a clean Linode/Foreman-style UI. You can:
 
 ## ✨ Implemented Features
 
-- ✅ Professional Linode/Foreman-style dashboard (fixed sidebar + top navbar + summary stats row)
+- ✅ Professional Foreman-style dashboard (fixed sidebar + top navbar + summary stats row)
 - ✅ Multi-tenant schema (Organizations → Host Groups → Hosts)
 - ✅ Full interactive CRUD for Organizations, Host Groups, and Hosts
 - ✅ Clickable organization cards with drill-down view
