@@ -14,33 +14,36 @@
         <h1 class="text-4xl font-bold mb-2">🛡️ OpenSCAP Compliance Hub</h1>
         <p class="text-emerald-400 mb-8">Multi-tenant dashboard — NIST Development phase ready</p>
 
-        <!-- Simple dashboard card -->
+        <!-- Multi-tenant Dashboard Structure -->
         <div class="bg-gray-900 rounded-2xl p-8 shadow-2xl">
-            <h2 class="text-2xl font-semibold mb-6">Welcome, Admin!</h2>
-            <div class="grid grid-cols-3 gap-6">
-                <div class="bg-gray-800 rounded-xl p-6">
-                    <p class="text-sm text-gray-400">Organizations</p>
-                    <p class="text-5xl font-bold text-emerald-400">0</p>
-                </div>
-                <div class="bg-gray-800 rounded-xl p-6">
-                    <p class="text-sm text-gray-400">Hosts</p>
-                    <p class="text-5xl font-bold text-blue-400">0</p>
-                </div>
-                <div class="bg-gray-800 rounded-xl p-6">
-                    <p class="text-sm text-gray-400">Avg Compliance</p>
-                    <p class="text-5xl font-bold text-amber-400">100%</p>
+            <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+                <span>📊 Multi-Tenant Compliance Hub</span>
+            </h2>
+
+            <!-- Organizations List (top level) -->
+            <div class="mb-8">
+                <h3 class="text-lg font-medium text-gray-400 mb-3">Organizations (Clients)</h3>
+                <div id="org-list" class="grid grid-cols-3 gap-4">
+                    <!-- Populated via HTMX later -->
+                    <div class="bg-gray-800 rounded-xl p-6 cursor-pointer hover:bg-gray-700" hx-get="/api/orgs" hx-target="#org-list">
+                        <p class="text-emerald-400 font-semibold">Acme Corp</p>
+                        <p class="text-4xl font-bold">87%</p>
+                        <p class="text-xs text-gray-500">12 hosts • 3 groups</p>
+                    </div>
+                    <!-- More org cards added by HTMX -->
                 </div>
             </div>
-            <div class="mt-8 text-center text-gray-400 text-sm">
-                HTMX + Askama demo — click the button below to test live updates
+
+            <!-- Host Groups & Hosts (will be loaded when org is selected) -->
+            <div id="group-host-area" class="hidden">
+                <!-- HTMX will swap this area with groups + hosts -->
             </div>
-            <button 
-                hx-get="/api/hello"
-                hx-target="#demo-area"
-                class="mt-6 px-8 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-medium">
-                Test HTMX (live reload)
-            </button>
-            <div id="demo-area" class="mt-4 text-emerald-400 font-mono"></div>
+
+            <!-- ARF Upload (kept for later) -->
+            <div class="mt-8 border-t border-gray-700 pt-8">
+                <h3 class="text-xl font-semibold mb-4">Upload OpenSCAP ARF XML (coming next)</h3>
+                <!-- (we'll re-add the form once schema is locked) -->
+            </div>
         </div>
     </div>
 </body>
