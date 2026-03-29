@@ -1,0 +1,32 @@
+-- 000003__seed_test_data.sql
+-- NIST demo data so the dashboard is not empty on first run
+
+INSERT INTO organizations (name) VALUES ('Acme Corp') ON CONFLICT DO NOTHING;
+INSERT INTO organizations (name) VALUES ('Beta LLC') ON CONFLICT DO NOTHING;
+
+-- Hosts for Acme Corp
+INSERT INTO hosts (organization_id, hostname, ip_address, description)
+VALUES (1, 'web01.acme.corp', '10.0.1.10', 'Production web server')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO hosts (organization_id, hostname, ip_address, description)
+VALUES (1, 'db01.acme.corp', '10.0.1.20', 'PostgreSQL database')
+ON CONFLICT DO NOTHING;
+
+-- Host groups for Acme Corp
+INSERT INTO host_groups (organization_id, name, description)
+VALUES (1, 'Production', 'Live customer-facing servers')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO host_groups (organization_id, name, description)
+VALUES (1, 'Development', 'Dev & test servers')
+ON CONFLICT DO NOTHING;
+
+-- Memberships
+INSERT INTO host_group_memberships (host_id, host_group_id)
+VALUES (1, 1), (2, 1) ON CONFLICT DO NOTHING;   -- both hosts in Production
+
+-- Sample scan (will be replaced by real ARF later)
+INSERT INTO scans (host_id, arf_filename, profile, compliance_percent)
+VALUES (1, 'scan-web01.arf.xml', 'cis-fedora-40', 92.5)
+ON CONFLICT DO NOTHING;

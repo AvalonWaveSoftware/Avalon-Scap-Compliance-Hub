@@ -1,0 +1,51 @@
+<div class="mb-6">
+    <div class="flex justify-between items-center mb-3">
+        <h3 class="text-lg font-medium text-gray-400">Organization: {{ org.name }}</h3>
+        <button hx-get="/api/dashboard/orgs" hx-target="#main-content" class="flex items-center gap-2 px-5 py-2 bg-gray-700 hover:bg-gray-600 rounded-2xl text-sm font-medium">← Back to All Organizations</button>
+    </div>
+
+    <!-- Host Groups for this org -->
+    <div class="mb-8">
+        <div class="flex justify-between items-center mb-3">
+            <h4 class="text-md font-medium text-gray-400">Host Groups</h4>
+            <button hx-get="/api/dashboard/new-group-form?org_id={{ org.id }}" hx-target="#new-group-modal" hx-on::after-request="document.getElementById('new-group-modal').classList.remove('hidden')" class="flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-sm font-medium">
+                <span class="text-xl">+</span> New Host Group
+            </button>
+        </div>
+        <div id="new-group-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50"></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- All Hosts (virtual) -->
+            <div class="bg-gray-800 rounded-3xl p-6">
+                <p class="font-semibold">All Hosts</p>
+                <p class="text-emerald-400 text-sm">{{ org.host_count }} hosts</p>
+            </div>
+            {% for group in groups %}
+            <div class="bg-gray-800 rounded-3xl p-6">
+                <p class="font-semibold">{{ group.name }}</p>
+                <p class="text-emerald-400 text-sm">{{ group.host_count }} hosts</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Hosts for this org -->
+    <div>
+        <div class="flex justify-between items-center mb-3">
+            <h4 class="text-md font-medium text-gray-400">Hosts</h4>
+            <button hx-get="/api/dashboard/new-host-form?org_id={{ org.id }}" hx-target="#new-host-modal" hx-on::after-request="document.getElementById('new-host-modal').classList.remove('hidden')" class="flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-sm font-medium">
+                <span class="text-xl">+</span> New Host
+            </button>
+        </div>
+        <div id="new-host-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center z-50"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for host in hosts %}
+            <div class="bg-gray-800 rounded-3xl p-6">
+                <p class="font-semibold">{{ host.hostname }}</p>
+                <p class="text-gray-400 text-sm">
+                    {{ host.ip_address.as_deref().unwrap_or("") }} • {{ host.description.as_deref().unwrap_or("") }}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

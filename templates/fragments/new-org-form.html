@@ -1,0 +1,25 @@
+<div class="bg-gray-900 rounded-3xl p-8 max-w-md w-full shadow-2xl">
+    <h3 class="text-2xl font-semibold mb-6">New Organization (Client)</h3>
+    
+    <form hx-post="/api/dashboard/create-org" hx-target="#main-content" hx-swap="innerHTML" class="space-y-6">
+        <div>
+            <label class="block text-sm text-gray-400 mb-1">Organization Name</label>
+            <input type="text" name="name" required 
+                   class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        
+        <div class="flex gap-4">
+            <button type="submit" 
+                    class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-3 rounded-2xl font-medium">
+                Create Organization
+            </button>
+            <button type="button" 
+                    hx-get="/api/dashboard/orgs" 
+                    hx-target="#main-content"
+                    hx-on::after-request="document.getElementById('new-org-modal').classList.add('hidden')"
+                    class="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded-2xl font-medium">
+                Cancel
+            </button>
+        </div>
+    </form>
+</div>

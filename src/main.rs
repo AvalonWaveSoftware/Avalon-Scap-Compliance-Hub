@@ -1,14 +1,12 @@
-use askama::Template;
-use axum::{response::Html, routing::get, Router, extract::State};
-use sqlx::{PgPool, postgres::PgPoolOptions};
+use axum::{routing::{get, post}, Router};
+use sqlx::postgres::PgPoolOptions;
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-// Dashboard template (unchanged)
-#[derive(Template)]
-#[template(path = "dashboard.html")]
-struct DashboardTemplate;
+mod models;
+mod handlers;
+use crate::handlers::*;
 
 #[tokio::main]
 async fn main() {
@@ -17,7 +15,6 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    // NEW: Secure peer-auth connection (no password, localhost socket only)
     let database_url = std::env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres:///oscap_hub".to_string());
     
@@ -27,7 +24,6 @@ async fn main() {
         .await
         .expect("Failed to connect to Postgres — check peer auth and user oscap-hub");
 
-    // Run migrations automatically (NIST CM-2)
     sqlx::migrate!()
         .run(&pool)
         .await
@@ -37,7 +33,17 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(dashboard_handler))
-        .route("/api/hello", get(hello_handler))
+        .route("/api/dashboard/orgs", get(orgs_handler))
+        .route("/api/dashboard/groups", get(groups_handler))
+        .route("/api/dashboard/hosts", get(hosts_handler))
+        .route("/api/dashboard/reports", get(reports_handler))
+        .route("/api/dashboard/new-org-form", get(new_org_form_handler))
+        .route("/api/dashboard/create-org", post(create_org_handler))
+        .route("/api/dashboard/new-group-form", get(new_group_form_handler))
+        .route("/api/dashboard/create-group", post(create_group_handler))
+        .route("/api/dashboard/new-host-form", get(new_host_form_handler))
+        .route("/api/dashboard/create-host", post(create_host_handler))
+        .route("/api/dashboard/org/:org_id", get(org_detail_handler))
         .with_state(pool);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
@@ -47,21 +53,4 @@ async fn main() {
     axum::serve(listener, app.into_make_service())
         .await
         .unwrap();
-}
-
-async fn dashboard_handler(State(pool): State<PgPool>) -> Html<String> {
-    let _org_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM organizations")
-        .fetch_one(&pool)
-        .await
-        .unwrap_or(0);
-
-    let template = DashboardTemplate;
-    match template.render() {
-        Ok(html) => Html(html),
-        Err(_) => Html("<h1 style='color:red'>Template error</h1>".to_string()),
-    }
-}
-
-async fn hello_handler() -> &'static str {
-    "✅ HTMX + secure DB works! (NIST Development phase)"
 }
